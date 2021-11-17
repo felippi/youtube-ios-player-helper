@@ -1,4 +1,6 @@
-# YouTube-Player-iOS-Helper
+# YouTube-Player-iOS-Helper by FCM
+
+## Project original: [https://github.com/youtube/youtube-ios-player-helper](https://github.com/youtube/youtube-ios-player-helper)
 
 [![Version](https://cocoapod-badges.herokuapp.com/v/youtube-ios-player-helper/badge.png)](https://cocoapods.org/pods/youtube-ios-player-helper)
 [![Platform](https://cocoapod-badges.herokuapp.com/p/youtube-ios-player-helper/badge.png)](https://cocoapods.org/pods/youtube-ios-player-helper)
@@ -14,10 +16,14 @@ To run the example project; clone the repo, and run `pod install` from the Proje
 YouTube-Player-iOS-Helper is available through [CocoaPods](http://cocoapods.org). To install
 the library, add the following line to your Podfile and replace "x.y.z" with the latest version.
 
+    pod 'youtube-ios-player-helper', :git => 'https://github.com/felippi/youtube-ios-player-helper'
+
+instead of    
+    
     pod "youtube-ios-player-helper", "~> x.y.z"
 
 After installing in your project and opening the workspace, to use the library:
-
+instead of
   1. Drag a UIView the desired size of your player onto your Storyboard.
   2. Change the UIView's class in the Identity Inspector tab to YTPlayerView
   3. Import "YTPlayerView.h" in your ViewController.
@@ -34,7 +40,10 @@ After installing in your project and opening the workspace, to use the library:
 See the sample project for more advanced uses, including passing additional player parameters and
 working with callbacks via YTPlayerViewDelegate.
 
-## Author
+## Author of changes
+- Felippi Crominski Magalhães
+
+## Author Original
 
 - Ikai Lan
 - Ibrahim Ulukaya
