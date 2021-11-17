@@ -273,6 +273,11 @@ typedef void (^YTPlaybackQualityCompletionHandler)(YTPlaybackQuality result,
  */
 - (void)stopVideo;
 
+
+- (void)fcmOpenOnFullscreen;
+- (void)fcmShowPrevNext;
+
+
 /**
  * Seek to a given time on a playing video. Corresponds to this method from
  * the JavaScript API:

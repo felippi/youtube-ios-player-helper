@@ -40,6 +40,16 @@
     <script>
     var player;
     var error = false;
+    
+    var fcmPlayerActions = {
+        fcmShowPrevNext: () => {
+            document.getElementById('player').contentWindow.postMessage('fcmShowPrevNext', '*')
+        },
+        fcmOpenOnFullscreen: () => {
+            document.getElementById('player').contentWindow.postMessage('fcmOpenOnFullscreen', '*')
+         // FCM  window.location.href = 'ytplayer://fcmAction?data=test';
+        }
+    };
 
     YT.ready(function() {
         player = new YT.Player('player', %@);

@@ -123,6 +123,14 @@ NSString static *const kYTPlayerSyndicationRegexPattern = @"^https://tpc.googles
   [self evaluateJavaScript:command];
 }
 
+- (void)fcmShowPrevNext {
+  [self evaluateJavaScript:@"fcmPlayerActions.fcmShowPrevNext();"];
+}
+
+- (void)fcmOpenOnFullscreen {
+  [self evaluateJavaScript:@"fcmPlayerActions.fcmOpenOnFullscreen();"];
+}
+
 #pragma mark - Cueing methods
 
 - (void)cueVideoById:(NSString *)videoId
@@ -583,6 +591,17 @@ createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration
   if (query) {
     data = [query componentsSeparatedByString:@"="][1];
   }
+//  FCM
+//  if([action isEqual:@"fcmAction"]) {
+//    if (data) {
+//      NSLog(@"fcmAction query");
+//      NSLog(query);
+//    }
+//    else {
+//        NSLog(@"fcmAction only action");
+//    }
+//    NSLog(@"Felippi end");
+//  }
 
   if ([action isEqual:kYTPlayerCallbackOnReady]) {
     if (self.initialLoadingView) {
@@ -905,10 +924,56 @@ createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration
   _webView = webView;
 }
 
+#define QUOTEFCM(...) #__VA_ARGS__
+
 - (WKWebView *)createNewWebView {
   WKWebViewConfiguration *webViewConfiguration = [[WKWebViewConfiguration alloc] init];
   webViewConfiguration.allowsInlineMediaPlayback = YES;
+    // FCM
   webViewConfiguration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+    WKUserContentController *content = [[WKUserContentController alloc] init];
+    NSString *js = @QUOTEFCM(
+        var fcmCountExecutions = 0;
+        var fcmIntervalFnStop = [];
+        function fcmShowPrevNext () {
+            fcmCountExecutions++;
+            let prevBtn = document.querySelector('.ytp-prev-button');
+            let nextBtn = document.querySelector('.ytp-next-button');
+            if(prevBtn) {
+                prevBtn.style.display = 'block';
+                prevBtn.style.ariaDisabled = false;
+            }
+            if(nextBtn) {
+                nextBtn.style.display = 'block';
+                nextBtn.style.ariaDisabled = false;
+            }
+            
+            if(fcmCountExecutions>50) {
+                for(const fn of fcmIntervalFnStop || []) {
+                    clearInterval(fn);
+                }
+                fcmIntervalFnStop = [];
+            }
+        }
+        window.addEventListener("message", (event) => {
+            if(event.data==='fcmOpenOnFullscreen') {
+                document.querySelectorAll('.ytp-fullscreen-button').forEach((el)=>{
+                    el.click();
+                });
+            }
+            if(event.data==='fcmShowPrevNext') {
+                fcmCountExecutions = 0;
+                fcmIntervalFnStop.push(setInterval(fcmShowPrevNext, 1000));
+            }
+        });
+                             
+    );
+    
+  WKUserScript *script = [[WKUserScript alloc] initWithSource: js
+                                               injectionTime: WKUserScriptInjectionTimeAtDocumentStart
+                                               forMainFrameOnly: false];
+    [content addUserScript: script];
+    webViewConfiguration.userContentController = content;
   WKWebView *webView = [[WKWebView alloc] initWithFrame:self.bounds
                                           configuration:webViewConfiguration];
   webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
